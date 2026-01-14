@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#111111" />
+  <title>Tiny Box</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <style>
+    body{
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      margin:0; padding:24px;
+      display:flex; align-items:center; justify-content:center;
+      min-height:100vh;
+      background:#f5f5f7;
+    }
+    .wrap{ width:min(520px, 100%); }
+    h1{ font-size:20px; margin:0 0 12px; }
+    .box{
+      width:100%;
+      height:220px;
+      border:2px solid #111;
+      border-radius:16px;
+      background:#fff;
+      padding:16px;
+      box-sizing:border-box;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    textarea{
+      flex:1;
+      width:100%;
+      resize:none;
+      border:1px solid #ddd;
+      border-radius:12px;
+      padding:12px;
+      font-size:16px;
+      line-height:1.4;
+      box-sizing:border-box;
+      outline:none;
+    }
+    .row{
+      display:flex;
+      gap:10px;
+      justify-content:flex-end;
+    }
+    button{
+      padding:10px 14px;
+      border-radius:12px;
+      border:1px solid #111;
+      background:#111;
+      color:#fff;
+      font-size:14px;
+      cursor:pointer;
+    }
+    button.secondary{
+      background:#fff;
+      color:#111;
+    }
+    .hint{ margin-top:10px; font-size:12px; color:#555; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>🧱 Tiny Box (시험용)</h1>
+
+    <div class="box">
+      <textarea id="text" placeholder="여기에 글을 입력하세요"></textarea>
+
+      <div class="row">
+        <button class="secondary" id="clearBtn">지우기</button>
+        <button id="saveBtn">저장</button>
+      </div>
+    </div>
+
+    <div class="hint">
+      ✅ 저장은 기기(브라우저) 로컬에 저장됩니다. (로그인 없음)<br/>
+      ✅ 설치: 안드로이드 크롬 → ⋮ → “홈 화면에 추가”
+    </div>
+  </div>
+
+  <script>
+    const KEY = "tinybox:text";
+    const textEl = document.getElementById("text");
+    const saveBtn = document.getElementById("saveBtn");
+    const clearBtn = document.getElementById("clearBtn");
+
+    // 로컬에서 불러오기
+    textEl.value = localStorage.getItem(KEY) || "";
+
+    // 저장
+    saveBtn.addEventListener("click", () => {
+      localStorage.setItem(KEY, textEl.value);
+      alert("저장됨");
+    });
+
+    // 지우기
+    clearBtn.addEventListener("click", () => {
+      textEl.value = "";
+      localStorage.removeItem(KEY);
+    });
+
+    // PWA 서비스워커 등록(배포 후 동작)
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js").catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>
